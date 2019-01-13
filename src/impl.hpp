@@ -47,6 +47,7 @@ struct RequestData {
     E_HTTP_METHOD method;
     E_CONTENT_TYPE requestType;
     int headers;
+    int extraid;
     std::string bodyString;
     web::json::value bodyJson;
 };
@@ -58,12 +59,13 @@ struct ResponseData {
     E_CONTENT_TYPE responseType;
     std::string rawBody;
     bool isWebSocket = false;
+    int extraid;
 };
 
 int RequestsClient(std::string endpoint, int headers);
 int RequestHeaders(std::vector<std::pair<std::string, std::string>> headers);
-int Request(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, char* data, int headers);
-int RequestJSON(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, web::json::value json, int headers);
+int Request(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, char* data, int headers, int extraid);
+int RequestJSON(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, web::json::value json, int headers, int extraid);
 
 int WebSocketClient(std::string address, std::string callback);
 int WebSocketSend(int id, std::string data);

@@ -34,7 +34,7 @@ int Impl::RequestHeaders(std::vector<std::pair<std::string, std::string>> header
     return id;
 }
 
-int Impl::Request(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, char* data, int headers)
+int Impl::Request(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, char* data, int headers, int extraid)
 {
     RequestData requestData;
     requestData.amx = amx;
@@ -45,6 +45,7 @@ int Impl::Request(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std:
     requestData.requestType = E_CONTENT_TYPE::string;
     requestData.headers = headers;
     requestData.bodyString = data;
+    requestData.extraid = extraid;
 
     int ret = doRequest(id, requestData);
     if (ret < 0) {
@@ -53,7 +54,7 @@ int Impl::Request(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std:
     return requestCounter++;
 }
 
-int Impl::RequestJSON(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, web::json::value json, int headers)
+int Impl::RequestJSON(AMX* amx, int id, std::string path, E_HTTP_METHOD method, std::string callback, web::json::value json, int headers, int extraid)
 {
     RequestData requestData;
     requestData.amx = amx;
@@ -64,6 +65,7 @@ int Impl::RequestJSON(AMX* amx, int id, std::string path, E_HTTP_METHOD method, 
     requestData.requestType = E_CONTENT_TYPE::json;
     requestData.headers = headers;
     requestData.bodyJson = json;
+    requestData.extraid = extraid;
 
     int ret = doRequest(id, requestData);
     if (ret < 0) {
@@ -104,6 +106,7 @@ void Impl::doRequestWithClient(ClientData cd, RequestData requestData)
     responseData.id = requestData.id;
     responseData.callback = requestData.callback;
     responseData.responseType = E_CONTENT_TYPE::empty;
+    responseData.extraid = requestData.extraid;
 
     try {
         doRequestSync(cd, requestData, responseData);
@@ -171,6 +174,7 @@ void Impl::doRequestSync(ClientData cd, RequestData requestData, ResponseData& r
     responseData.status = response.status_code();
     responseData.rawBody = body;
     responseData.responseType = requestData.requestType;
+    responseData.extraid = requestData.extraid;
 }
 
 web::http::method Impl::methodName(E_HTTP_METHOD id)

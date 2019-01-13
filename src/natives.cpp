@@ -37,8 +37,9 @@ int Natives::Request(AMX* amx, cell* params)
     amx_GetCString(amx, params[5], data);
     // std::string data = amx_GetCppString(amx, params[6]);
     int headers = params[6];
+    int extraid = params[7];
 
-    return Impl::Request(amx, id, path, method, callback, data, headers);
+    return Impl::Request(amx, id, path, method, callback, data, headers, extraid);
 }
 
 int Natives::RequestJSON(AMX* amx, cell* params)
@@ -49,8 +50,9 @@ int Natives::RequestJSON(AMX* amx, cell* params)
     std::string callback = amx_GetCppString(amx, params[4]);
     auto obj = JSON::Get(params[5]);
     int headers = params[6];
+    int extraid = params[7];
 
-    return Impl::RequestJSON(amx, id, path, method, callback, obj, headers);
+    return Impl::RequestJSON(amx, id, path, method, callback, obj, headers, extraid);
 }
 
 void Natives::processTick(AMX* amx)
@@ -80,6 +82,7 @@ void Natives::processTick(AMX* amx)
         }
         case Impl::E_CONTENT_TYPE::empty: {
             // (Request:id, errorCode, errorMessage[], len)
+            amx_Push(amx, response.extraid);
             amx_Push(amx, response.rawBody.length());
             amx_PushString(amx, &amx_addr, &phys_addr, response.rawBody.c_str(), 0, 0);
             amx_Push(amx, response.status);
@@ -92,6 +95,7 @@ void Natives::processTick(AMX* amx)
         }
 
         case Impl::E_CONTENT_TYPE::string: {
+            amx_Push(amx, response.extraid);
             amx_Push(amx, response.rawBody.length());
             amx_PushString(amx, &amx_addr, &phys_addr, response.rawBody.c_str(), 0, 0);
 
@@ -113,6 +117,8 @@ void Natives::processTick(AMX* amx)
         }
 
         case Impl::E_CONTENT_TYPE::json: {
+            amx_Push(amx, response.extraid);
+
             cell id = -1;
             try {
                 json::value* obj = new json::value;

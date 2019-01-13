@@ -39,7 +39,8 @@ native Request:Request(
     E_HTTP_METHOD:method,
     callback[],
     body[] = "",
-    Headers:headers = Headers:-1
+    Headers:headers = Headers:-1,
+    extraid = -1
 );
 
 // RequestJSON performs a request to send or receive JSON data
@@ -49,7 +50,8 @@ native Request:RequestJSON(
     E_HTTP_METHOD:method,
     callback[],
     Node:json = Node:-1,
-    Headers:headers = Headers:-1
+    Headers:headers = Headers:-1,
+    extraid = -1
 );
 
 // WebSocketClient creates a websocket client and establishes a connection at
